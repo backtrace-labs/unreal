@@ -7,6 +7,7 @@
 #include <Framework/Application/SlateApplication.h>
 #include <HAL/PlatformFileManager.h>
 #include <Misc/ConfigCacheIni.h>
+#include <Misc/ConfigContext.h>
 #include <Misc/DataDrivenPlatformInfoRegistry.h>
 #include <Misc/FileHelper.h>
 #include <Misc/Paths.h>
@@ -25,7 +26,6 @@
 #include "SauceReport.h"
 #include "SauceReportSettings.h"
 #include "SauceReportStyle.h"
-#include "Misc/ConfigContext.h"
 
 #define LOCTEXT_NAMESPACE "SauceReportChecklist"
 
