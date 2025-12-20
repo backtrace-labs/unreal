@@ -27,11 +27,13 @@ public:
 namespace SauceLabs
 {
 	FString GetProjectPlatformEngineIniPath(const FString& PlatformName);
+
 	bool EnsureEnginePlatformIniExists(const FString& PlatformName);
 
 	// Helper function to safely read, modify, and save a specific INI file
 	// bypassing the global GConfig cache which can cause pathing issues.
-	void UpdateSpecificIniFile(const FString& FilePath, const FString& Section, const FString& Key, const FString& Value);
+	bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Section, const FString& Key, const FString& Value);
+	bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Section, const FString& Key, const bool Value);
 
 	FString PlatformNamesToString(const TMap<FName, FDataDrivenPlatformInfo>& PlatformInfos);
 /* SauceLabs */ }

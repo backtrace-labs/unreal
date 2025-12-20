@@ -18,6 +18,5 @@ public:
 	// TCommands<> interface
 	virtual void RegisterCommands() override;
 
-
 	TSharedPtr<FUICommandInfo> PluginAction{nullptr};
 };

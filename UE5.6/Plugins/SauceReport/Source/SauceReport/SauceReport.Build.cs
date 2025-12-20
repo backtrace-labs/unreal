@@ -11,7 +11,8 @@ public class SauceReport : ModuleRules
 			new string[]
 			{
 				"Core",
-				"DeveloperSettings"
+				"DeveloperSettings",
+				"UMG"
 			});
 
 		PrivateDependencyModuleNames.AddRange(
@@ -21,6 +22,7 @@ public class SauceReport : ModuleRules
 				"InputCore",
 				"EditorFramework",
 				"DeveloperSettings",
+				"DeveloperToolSettings",
 				"UnrealEd",
 				"ToolMenus",
 				"CoreUObject",

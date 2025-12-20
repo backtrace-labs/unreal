@@ -40,7 +40,7 @@ bool EnsureEnginePlatformIniExists(const FString& PlatformName)
 	return true;
 }
 
-void UpdateSpecificIniFile(const FString& FilePath, const FString& Section, const FString& Key, const FString& Value)
+bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Section, const FString& Key, const FString& Value)
 {
 	FConfigFile ConfigFile;
 	// Attempt to read the file from disk. 
@@ -53,12 +53,27 @@ void UpdateSpecificIniFile(const FString& FilePath, const FString& Section, cons
 	// Write the changes back to disk immediately
 	if (ConfigFile.Write(FilePath))
 	{
-		UE_LOG(LogSauceReport, Log, TEXT("Successfully wrote DataRouterUrl to %s"), *FilePath);
+		UE_LOG(LogSauceReport, Verbose, TEXT("Successfully wrote string %s to %s"), *Key, *FilePath);
+		return true;
 	}
-	else
+
+	UE_LOG(LogSauceReport, Error, TEXT("Failed to write string %s to %s. Check file permissions."), *Key, *FilePath);
+	return false;
+}
+
+bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Section, const FString& Key, const bool Value)
+{
+	FConfigFile ConfigFile;
+	ConfigFile.Read(FilePath);
+	ConfigFile.SetBool(*Section, *Key, Value);
+	if (ConfigFile.Write(FilePath))
 	{
-		UE_LOG(LogSauceReport, Error, TEXT("Failed to write to %s. Check file permissions."), *FilePath);
+		UE_LOG(LogSauceReport, Verbose, TEXT("Successfully wrote bool %s to %s"), *Key, *FilePath);
+		return true;
 	}
+
+	UE_LOG(LogSauceReport, Error, TEXT("Failed to write bool to %s. Check file permissions."), *FilePath);
+	return false;
 }
 
 FString PlatformNamesToString(const TMap<FName, FDataDrivenPlatformInfo>& PlatformInfos)

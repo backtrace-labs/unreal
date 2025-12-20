@@ -5,40 +5,45 @@
 #include <ISettingsModule.h>
 #include <ISettingsSection.h>
 #include <ToolMenus.h>
+#include <Framework/Docking/TabManager.h>
 #include <Misc/DataDrivenPlatformInfoRegistry.h>
-#include <Misc/MessageDialog.h>
 
+#include "SauceReportChecklist.h"
 #include "SauceReportCommands.h"
 #include "SauceReportSettings.h"
 #include "SauceReportStyle.h"
+#include "Widgets/Docking/SDockTab.h"
 
 #define LOCTEXT_NAMESPACE "FSauceReportModule"
 
 DEFINE_LOG_CATEGORY(LogSauceReport);
 
+static const FName SauceReportTabName(TEXT("SauceReportTab"));
+
 void FSauceReportModule::StartupModule()
 {
 	// This code will execute after the module is loaded into memory; 
 	// the exact timing is specified in the .uplugin file per-module (LoadingPhase)
-	RegisterSettings();
 	FSauceReportStyle::Initialize();
 	FSauceReportStyle::ReloadTextures();
 
 	FSauceReportCommands::Register();
 	PluginCommands = MakeShareable(new FUICommandList);
-
-	PluginCommands->MapAction(
-		FSauceReportCommands::Get().PluginAction,
-		FExecuteAction::CreateRaw(this, &FSauceReportModule::PluginButtonClicked),
+	PluginCommands->MapAction(FSauceReportCommands::Get().PluginAction,
+		FExecuteAction::CreateRaw(this, &FSauceReportModule::InvokeSauceReportTab),
 		FCanExecuteAction());
 
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FSauceReportModule::RegisterMenus));
+	RegisterSettings();
+	RegisterSauceReportTab();
 }
 
 void FSauceReportModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
+	UnregisterSettings();
+	UnregisterSauceReportTab();
 
 	UToolMenus::UnRegisterStartupCallback(this);
 
@@ -47,16 +52,6 @@ void FSauceReportModule::ShutdownModule()
 	FSauceReportStyle::Shutdown();
 
 	FSauceReportCommands::Unregister();
-}
-
-void FSauceReportModule::PluginButtonClicked()
-{
-	// Put your "OnButtonClicked" stuff here
-	FText DialogText = FText::Format(
-		LOCTEXT("PluginButtonDialogText", "Add code to {0} in {1} to override this button's actions"),
-		FText::FromString(TEXT("FSauceReportModule::PluginButtonClicked()")),
-		FText::FromString(TEXT("SauceReport.cpp")));
-	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
 }
 
 void FSauceReportModule::RegisterSettings()
@@ -102,6 +97,16 @@ void FSauceReportModule::RegisterMenus()
 	}*/
 }
 
+void FSauceReportModule::RegisterSauceReportTab()
+{
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(SauceReportTabName,
+		FOnSpawnTab::CreateRaw(this,&FSauceReportModule::SpawnSauceReportTab))
+		.SetDisplayName(LOCTEXT("TabTitle", "Sauce Report Checklist"))
+		.SetTooltipText(LOCTEXT("TabTooltip", "Open the Sauce Labs Report configuration checklist"))
+		.SetIcon(FSlateIcon(FSauceReportStyle::GetStyleSetName(), "SauceReport.PluginAction"))
+		.SetMenuType(ETabSpawnerMenuType::Hidden);
+}
+
 void FSauceReportModule::UnregisterSettings()
 {
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
@@ -110,12 +115,21 @@ void FSauceReportModule::UnregisterSettings()
 	}
 }
 
+void FSauceReportModule::UnregisterSauceReportTab()
+{
+	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(SauceReportTabName);
+}
+
 bool FSauceReportModule::HandlePluginUserSettingsSaved()
 {
 	const USauceReportSettings* Settings = GetDefault<USauceReportSettings>();
 	// 1. Handle DefaultEngine.ini
 	const FString DefaultEngineIni = FPaths::ProjectConfigDir() / TEXT("DefaultEngine.ini");
-	SauceLabs::UpdateSpecificIniFile(DefaultEngineIni, TEXT("CrashReportClient"), TEXT("DataRouterUrl"), Settings->DefaultDataRouterUrl);
+	if (!SauceLabs::UpdateSectionKeyValueOnIniFile(DefaultEngineIni, TEXT("CrashReportClient"), 
+		TEXT("DataRouterUrl"), Settings->DefaultDataRouterUrl))
+	{
+		return false;
+	}
 
 	// 2. Handle Platform specific INIs
 	const TMap<FName, FDataDrivenPlatformInfo>& AllPlatformInfos = FDataDrivenPlatformInfoRegistry::GetAllPlatformInfos();
@@ -143,7 +157,11 @@ bool FSauceReportModule::HandlePluginUserSettingsSaved()
 		if (SauceLabs::EnsureEnginePlatformIniExists(PlatUrl.Key))
 		{
 			const FString PlatformIniPath = SauceLabs::GetProjectPlatformEngineIniPath(PlatUrl.Key);
-			SauceLabs::UpdateSpecificIniFile(PlatformIniPath, TEXT("CrashReportClient"), TEXT("DataRouterUrl"), PlatUrl.Value);
+			if (!SauceLabs::UpdateSectionKeyValueOnIniFile(PlatformIniPath, TEXT("CrashReportClient"), 
+				TEXT("DataRouterUrl"), PlatUrl.Value))
+			{
+				return false;
+			}
 		}
 	}
 
@@ -156,6 +174,20 @@ void FSauceReportModule::HandleCustomSettingsSaved(UObject*, FPropertyChangedEve
 	{
 		HandlePluginUserSettingsSaved();
 	}
+}
+
+TSharedRef<SDockTab> FSauceReportModule::SpawnSauceReportTab(const FSpawnTabArgs& SpawnTabArgs)
+{
+	return SNew(SDockTab)
+	.TabRole(ETabRole::NomadTab)
+	[
+		SNew(SSauceReportChecklist)
+	];
+}
+
+void FSauceReportModule::InvokeSauceReportTab()
+{
+	FGlobalTabmanager::Get()->TryInvokeTab(SauceReportTabName);
 }
 
 #undef LOCTEXT_NAMESPACE
