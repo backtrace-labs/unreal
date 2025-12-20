@@ -1,0 +1,9 @@
+*.vsconfig
+*.sln
+.idea
+.vs
+_ReSharper.Caches
+DerivedDataCache
+Binaries
+Intermediate
+Saved
