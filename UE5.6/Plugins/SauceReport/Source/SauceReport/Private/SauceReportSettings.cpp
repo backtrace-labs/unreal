@@ -43,14 +43,51 @@ bool EnsureEnginePlatformIniExists(const FString& PlatformName)
 bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Section, const FString& Key, const FString& Value)
 {
 	FConfigFile ConfigFile;
-	// Attempt to read the file from disk. 
-	// Even if empty, we want to start with what exists physically.
 	ConfigFile.Read(FilePath);
 
-	// Set the string in the local object
-	ConfigFile.SetString(*Section, *Key, *Value);
+	// Check current value to avoid unnecessary writes
+	FString CurrentValue;
+	bool bKeyExists = false;
+	if (const FConfigSection* ConfigSection = ConfigFile.FindSection(*Section))
+	{
+		if (const FConfigValue* ConfigValue = ConfigSection->Find(*Key))
+		{
+			CurrentValue = ConfigValue->GetValue();
+			bKeyExists = true;
+		}
+	}
 
-	// Write the changes back to disk immediately
+	if (Value.IsEmpty())
+	{
+		// If key doesn't exist, nothing to remove
+		if (!bKeyExists)
+		{
+			return true;
+		}
+
+		// Remove the key if value is empty so engine uses its default
+		ConfigFile.Remove(*Key);
+
+		// Remove the section if it's now empty
+		if (const FConfigSection* ConfigSection = ConfigFile.FindSection(*Section))
+		{
+			if (ConfigSection->Num() == 0)
+			{
+				ConfigFile.Remove(*Section);
+			}
+		}
+	}
+	else
+	{
+		// If value is unchanged, skip writing
+		if (bKeyExists && CurrentValue == Value)
+		{
+			return true;
+		}
+
+		ConfigFile.SetString(*Section, *Key, *Value);
+	}
+
 	if (ConfigFile.Write(FilePath))
 	{
 		UE_LOG(LogSauceReport, Verbose, TEXT("Successfully wrote string %s to %s"), *Key, *FilePath);

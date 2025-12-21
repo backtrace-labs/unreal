@@ -66,8 +66,8 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 		}
 
 		// Remove the key if value is empty so engine uses its default
-		ConfigFile.RemoveKey(*Section, *Key);
-		
+		ConfigFile.RemoveKeyFromSection(*Section, *Key);
+
 		// Remove the section if it's now empty
 		if (const FConfigSection* ConfigSection = ConfigFile.FindSection(*Section))
 		{
