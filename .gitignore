@@ -10,3 +10,4 @@ Saved
 */Build/
 *.user
 */Production/
+*.xcworkspace

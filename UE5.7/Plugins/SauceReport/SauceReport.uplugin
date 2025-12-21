@@ -1,0 +1,25 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "SauceReport",
+	"Description": "Sauce Labs Error Reporting Plugin",
+	"Category": "Engine",
+	"CreatedBy": "Sauce Labs Inc.",
+	"CreatedByURL": "https://saucelabs.com/",
+	"DocsURL": "https://docs.saucelabs.com/",
+	"MarketplaceURL": "tbd",
+	"SupportURL": "https://saucelabs.com/contact-us",
+	"EngineVersion": "5.7.0",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "SauceReport",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
