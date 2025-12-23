@@ -611,7 +611,6 @@ TSharedRef<SWidget> SSauceReportChecklist::BuildPlatformsSection()
 TSharedRef<SWidget> SSauceReportChecklist::BuildCrashReporterSection()
 {
 	const bool bEnabled = IsIncludeCrashReporterEnabled();
-	const bool bIsWritable = IsDefaultGameIniWritable();
 
 	return SNew(SBorder)
 		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
@@ -654,21 +653,10 @@ TSharedRef<SWidget> SSauceReportChecklist::BuildCrashReporterSection()
 					.Padding(0, 2, 0, 0)
 					[
 						SNew(STextBlock)
-						.Text(bEnabled ? LOCTEXT("Enabled", "Enabled") : LOCTEXT("Disabled", "Disabled - Crash reports will not be sent"))
+						.Text(bEnabled ? LOCTEXT("Enabled", "Enabled") : LOCTEXT("Disabled", "Disabled: Crash reports will not be sent"))
 						.Font(FCoreStyle::GetDefaultFontStyle("Italic", 9))
 						.ColorAndOpacity(bEnabled ? FLinearColor::Green : FLinearColor::Red)
 					]
-				]
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.VAlign(VAlign_Center)
-				.Padding(8, 0, 0, 0)
-				[
-					SNew(SButton)
-					.Text(LOCTEXT("FixButton", "Enable"))
-					.IsEnabled(!bEnabled && bIsWritable)
-					.Visibility(bEnabled ? EVisibility::Collapsed : EVisibility::Visible)
-					.OnClicked(this, &SSauceReportChecklist::OnFixCrashReporterClicked)
 				]
 			]
 		];
@@ -676,6 +664,9 @@ TSharedRef<SWidget> SSauceReportChecklist::BuildCrashReporterSection()
 
 TSharedRef<SWidget> SSauceReportChecklist::BuildActionsSection()
 {
+	const bool bCrashReporterEnabled = IsIncludeCrashReporterEnabled();
+	const bool bDefaultGameWritable = IsDefaultGameIniWritable();
+
 	return SNew(SBorder)
 		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
 		.Padding(FMargin(12))
@@ -708,6 +699,17 @@ TSharedRef<SWidget> SSauceReportChecklist::BuildActionsSection()
 					SNew(SButton)
 					.Text(LOCTEXT("RefreshButton", "Refresh"))
 					.OnClicked(this, &SSauceReportChecklist::OnRefreshClicked)
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.VAlign(VAlign_Center)
+				.Padding(8, 0, 0, 0)
+				[
+					SNew(SButton)
+					.Text(LOCTEXT("FixButton", "Enable Crash Reporter"))
+					.IsEnabled(!bCrashReporterEnabled && bDefaultGameWritable)
+					.Visibility(bCrashReporterEnabled ? EVisibility::Collapsed : EVisibility::Visible)
+					.OnClicked(this, &SSauceReportChecklist::OnFixCrashReporterClicked)
 				]
 			]
 		];
