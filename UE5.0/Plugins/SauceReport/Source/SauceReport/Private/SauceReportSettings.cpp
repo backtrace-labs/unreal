@@ -45,6 +45,9 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 	FConfigFile ConfigFile;
 	ConfigFile.Read(FilePath);
 
+	// Trim the incoming value
+	FString TrimmedValue = Value.TrimStartAndEnd();
+
 	// Check current value to avoid unnecessary writes
 	FString CurrentValue;
 	bool bKeyExists = false;
@@ -52,12 +55,12 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 	{
 		if (const FConfigValue* ConfigValue = ConfigSection->Find(*Key))
 		{
-			CurrentValue = ConfigValue->GetValue();
+			CurrentValue = ConfigValue->GetValue().TrimStartAndEnd();
 			bKeyExists = true;
 		}
 	}
 
-	if (Value.IsEmpty())
+	if (TrimmedValue.IsEmpty())
 	{
 		// If key doesn't exist, nothing to remove
 		if (!bKeyExists)
@@ -65,12 +68,12 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 			return true;
 		}
 
-		// Remove the section if it's now empty
+		// Remove the key by getting the section and removing from it
 		if (FConfigSection* ConfigSection = ConfigFile.Find(*Section))
 		{
-			// Remove the key if value is empty so engine uses its default
 			ConfigSection->Remove(*Key);
 
+			// Remove the section if it's now empty
 			if (ConfigSection->Num() == 0)
 			{
 				ConfigFile.Remove(*Section);
@@ -80,13 +83,16 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 	else
 	{
 		// If value is unchanged, skip writing
-		if (bKeyExists && CurrentValue == Value)
+		if (bKeyExists && CurrentValue == TrimmedValue)
 		{
 			return true;
 		}
 
-		ConfigFile.SetString(*Section, *Key, *Value);
+		ConfigFile.SetString(*Section, *Key, *TrimmedValue);
 	}
+
+	// Force write by marking dirty
+	ConfigFile.Dirty = true;
 
 	if (ConfigFile.Write(FilePath))
 	{
