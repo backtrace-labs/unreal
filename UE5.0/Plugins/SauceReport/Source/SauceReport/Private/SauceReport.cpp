@@ -79,8 +79,13 @@ void FSauceReportModule::RegisterMenus()
 	{
 		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("MainFrame.MainMenu.Tools");
 		{
-			FToolMenuSection& Section = Menu->FindOrAddSection("Instrumentation");
-			Section.AddMenuEntryWithCommandList(FSauceReportCommands::Get().PluginAction, PluginCommands);
+			FToolMenuSection* Section = Menu->Sections.FindByPredicate([](const FToolMenuSection& TMS){ return TMS.Name.IsEqual(TEXT("CrashReporter")); });
+			if (!Section)
+			{
+				Section = &Menu->AddSection("CrashReporter", FText::FromString(TEXT("Crash Reporter")));
+			}
+
+			Section->AddMenuEntryWithCommandList(FSauceReportCommands::Get().PluginAction, PluginCommands);
 		}
 	}
 
@@ -101,8 +106,8 @@ void FSauceReportModule::RegisterSauceReportTab()
 {
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(SauceReportTabName,
 		FOnSpawnTab::CreateRaw(this,&FSauceReportModule::SpawnSauceReportTab))
-		.SetDisplayName(LOCTEXT("TabTitle", "Sauce Report Checklist"))
-		.SetTooltipText(LOCTEXT("TabTooltip", "Open the Sauce Labs Report configuration checklist"))
+		.SetDisplayName(LOCTEXT("TabTitle", "Configure Error Reporting"))
+		.SetTooltipText(LOCTEXT("TabTooltip", "Open the SauceLabs Error Reporting configuration"))
 		.SetIcon(FSlateIcon(FSauceReportStyle::GetStyleSetName(), "SauceReport.PluginAction"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 }

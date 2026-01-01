@@ -79,8 +79,13 @@ void FSauceReportModule::RegisterMenus()
 	{
 		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("MainFrame.MainMenu.Tools");
 		{
-			FToolMenuSection& Section = Menu->FindOrAddSection("Instrumentation");
-			Section.AddMenuEntryWithCommandList(FSauceReportCommands::Get().PluginAction, PluginCommands);
+			FToolMenuSection* Section = Menu->Sections.FindByPredicate([](const FToolMenuSection& TMS){ return TMS.Name.IsEqual(TEXT("CrashReporter")); });
+			if (!Section)
+			{
+				Section = &Menu->AddSection("CrashReporter", FText::FromString(TEXT("Crash Reporter")));
+			}
+
+			Section->AddMenuEntryWithCommandList(FSauceReportCommands::Get().PluginAction, PluginCommands);
 		}
 	}
 

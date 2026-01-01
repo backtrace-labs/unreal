@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "SauceReport",
+	"FriendlyName": "SauceLabs Error Reporting",
 	"Description": "Sauce Labs Error Reporting Plugin",
 	"Category": "Engine",
 	"CreatedBy": "Sauce Labs Inc.",

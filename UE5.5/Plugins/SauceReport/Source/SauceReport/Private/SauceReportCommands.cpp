@@ -6,7 +6,7 @@
 
 void FSauceReportCommands::RegisterCommands()
 {
-	UI_COMMAND(PluginAction, "SauceReport", "Sauce Report Checklist", EUserInterfaceActionType::Button, FInputChord());
+	UI_COMMAND(PluginAction, "Error Reporting", "SauceLabs Error Reporting", EUserInterfaceActionType::Button, FInputChord());
 }
 
 #undef LOCTEXT_NAMESPACE
