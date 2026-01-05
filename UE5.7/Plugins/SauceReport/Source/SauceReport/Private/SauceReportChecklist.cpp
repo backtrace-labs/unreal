@@ -349,7 +349,7 @@ TSharedRef<SWidget> SSauceReportChecklist::BuildHeaderSection()
 				.Padding(0, 4, 0, 0)
 				[
 					SNew(STextBlock)
-					.Text(LOCTEXT("HeaderSubtitle", "Configure Error Reporting with SauceLabs"))
+					.Text(LOCTEXT("HeaderSubtitle", "Configure Sauce Labs Error Reporting"))
 					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
 					.ColorAndOpacity(FSlateColor::UseSubduedForeground())
 				]
