@@ -107,7 +107,7 @@ void FSauceReportModule::RegisterSauceReportTab()
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(SauceReportTabName,
 		FOnSpawnTab::CreateRaw(this,&FSauceReportModule::SpawnSauceReportTab))
 		.SetDisplayName(LOCTEXT("TabTitle", "Configure Error Reporting"))
-		.SetTooltipText(LOCTEXT("TabTooltip", "Open the SauceLabs Error Reporting configuration"))
+		.SetTooltipText(LOCTEXT("TabTooltip", "Open the Sauce Labs Error Reporting configuration"))
 		.SetIcon(FSlateIcon(FSauceReportStyle::GetStyleSetName(), "SauceReport.PluginAction"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 }
