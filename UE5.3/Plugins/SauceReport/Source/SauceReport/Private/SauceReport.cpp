@@ -60,8 +60,8 @@ void FSauceReportModule::RegisterSettings()
 	{
 		ISettingsSectionPtr SettingsSection = SettingsModule->RegisterSettings("Project", 
 			"Plugins", "SauceReportSettings",
-			LOCTEXT("RuntimeGeneralSettingsName", "Sauce Report Settings"),
-			LOCTEXT("RuntimeGeneralSettingsDescription", "Crash Report Settings"),
+			LOCTEXT("RuntimeGeneralSettingsName", "Sauce Labs Error Reporting"),
+			LOCTEXT("RuntimeGeneralSettingsDescription", "Configure Crash Report Settings"),
 			GetMutableDefault<USauceReportSettings>());
 
 		if (SettingsSection.IsValid())

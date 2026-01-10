@@ -689,7 +689,7 @@ TSharedRef<SWidget> SSauceReportChecklist::BuildActionsSection()
 				.Padding(0, 0, 8, 0)
 				[
 					SNew(SButton)
-					.Text(LOCTEXT("OpenSettingsButton", "Open Sauce Report Settings"))
+					.Text(LOCTEXT("OpenSettingsButton", "Open Sauce Labs Error Reporting Settings"))
 					.OnClicked(this, &SSauceReportChecklist::OnOpenSettingsClicked)
 					.ButtonStyle(FAppStyle::Get(), "PrimaryButton")
 				]
