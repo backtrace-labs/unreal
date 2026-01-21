@@ -42,11 +42,11 @@ bool EnsureEnginePlatformIniExists(const FString& PlatformName)
 
 bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Section, const FString& Key, const FString& Value)
 {
+	// Trimmed version of the value to handle spaces only strings as empty
+	const FString& TrimmedValue{Value.TrimStartAndEnd()};
+
 	FConfigFile ConfigFile;
 	ConfigFile.Read(FilePath);
-
-	// Trim the incoming value
-	FString TrimmedValue = Value.TrimStartAndEnd();
 
 	// Check current value to avoid unnecessary writes
 	FString CurrentValue;
@@ -90,9 +90,6 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 
 		ConfigFile.SetString(*Section, *Key, *TrimmedValue);
 	}
-
-	// Force write by marking dirty
-	ConfigFile.Dirty = true;
 
 	if (ConfigFile.Write(FilePath))
 	{

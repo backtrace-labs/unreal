@@ -170,7 +170,7 @@ FString SSauceReportChecklist::GetDefaultDataRouterUrl()
 	{
 		if (const FConfigValue* ConfigValue = Section->Find(TEXT("DataRouterUrl")))
 		{
-			Value = ConfigValue->GetValue();
+			Value = ConfigValue->GetValue().TrimStartAndEnd();
 		}
 	}
 
@@ -204,7 +204,7 @@ bool SSauceReportChecklist::HasPlatformDataRouterUrl(const FString& PlatformName
 	{
 		if (const FConfigValue* ConfigValue = Section->Find(TEXT("DataRouterUrl")))
 		{
-			Value = ConfigValue->GetValue();
+			Value = ConfigValue->GetValue().TrimStartAndEnd();
 		}
 	}
 
@@ -226,7 +226,7 @@ FString SSauceReportChecklist::GetPlatformDataRouterUrl(const FString& PlatformN
 	{
 		if (const FConfigValue* ConfigValue = Section->Find(TEXT("DataRouterUrl")))
 		{
-			Value = ConfigValue->GetValue();
+			Value = ConfigValue->GetValue().TrimStartAndEnd();
 		}
 	}
 

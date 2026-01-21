@@ -42,6 +42,9 @@ bool EnsureEnginePlatformIniExists(const FString& PlatformName)
 
 bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Section, const FString& Key, const FString& Value)
 {
+	// Trimmed version of the value to handle spaces only strings as empty
+	const FString& TrimmedValue{Value.TrimStartAndEnd()};
+
 	FConfigFile ConfigFile;
 	ConfigFile.Read(FilePath);
 
@@ -52,12 +55,12 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 	{
 		if (const FConfigValue* ConfigValue = ConfigSection->Find(*Key))
 		{
-			CurrentValue = ConfigValue->GetValue();
+			CurrentValue = ConfigValue->GetValue().TrimStartAndEnd();
 			bKeyExists = true;
 		}
 	}
 
-	if (Value.IsEmpty())
+	if (TrimmedValue.IsEmpty())
 	{
 		// If key doesn't exist, nothing to remove
 		if (!bKeyExists)
@@ -67,7 +70,7 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 
 		// Remove the key if value is empty so engine uses its default
 		ConfigFile.RemoveKeyFromSection(*Section, *Key);
-		
+
 		// Remove the section if it's now empty
 		if (const FConfigSection* ConfigSection = ConfigFile.FindSection(*Section))
 		{
@@ -80,12 +83,12 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 	else
 	{
 		// If value is unchanged, skip writing
-		if (bKeyExists && CurrentValue == Value)
+		if (bKeyExists && CurrentValue == TrimmedValue)
 		{
 			return true;
 		}
 
-		ConfigFile.SetString(*Section, *Key, *Value);
+		ConfigFile.SetString(*Section, *Key, *TrimmedValue);
 	}
 
 	if (ConfigFile.Write(FilePath))
