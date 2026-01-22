@@ -152,7 +152,7 @@ bool SSauceReportChecklist::IsDefaultEngineIniWritable()
 
 bool SSauceReportChecklist::HasDefaultDataRouterUrl()
 {
-	return !GetDefaultDataRouterUrl().IsEmpty();
+	return SauceLabs::IsValidUrl(GetDefaultDataRouterUrl());
 }
 
 FString SSauceReportChecklist::GetDefaultDataRouterUrl()
@@ -191,24 +191,7 @@ bool SSauceReportChecklist::IsPlatformIniWritable(const FString& PlatformName)
 
 bool SSauceReportChecklist::HasPlatformDataRouterUrl(const FString& PlatformName)
 {
-	const FString PlatformIniPath = SauceLabs::GetProjectPlatformEngineIniPath(PlatformName);
-	if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*PlatformIniPath))
-	{
-		return false;
-	}
-
-	FString Value;
-	FConfigFile ConfigFile;
-	ConfigFile.Read(PlatformIniPath);
-	if (const FConfigSection* Section = ConfigFile.Find(TEXT("CrashReportClient")))
-	{
-		if (const FConfigValue* ConfigValue = Section->Find(TEXT("DataRouterUrl")))
-		{
-			Value = ConfigValue->GetValue().TrimStartAndEnd();
-		}
-	}
-
-	return !Value.IsEmpty();
+	return SauceLabs::IsValidUrl(GetPlatformDataRouterUrl(PlatformName));
 }
 
 FString SSauceReportChecklist::GetPlatformDataRouterUrl(const FString& PlatformName)

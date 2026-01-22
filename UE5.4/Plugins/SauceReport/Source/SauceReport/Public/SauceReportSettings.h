@@ -36,4 +36,7 @@ namespace SauceLabs
 	bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Section, const FString& Key, const bool Value);
 
 	FString PlatformNamesToString(const TMap<FName, FDataDrivenPlatformInfo>& PlatformInfos);
+
+	// Helper to validate URL format
+	bool IsValidUrl(const FString& Url);
 /* SauceLabs */ }

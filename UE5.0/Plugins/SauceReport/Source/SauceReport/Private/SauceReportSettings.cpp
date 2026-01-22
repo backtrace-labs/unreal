@@ -4,6 +4,7 @@
 
 #include <GenericPlatform/GenericPlatformFile.h>
 #include <HAL/PlatformFileManager.h>
+#include <Internationalization/Regex.h>
 #include <Misc/ConfigCacheIni.h>
 #include <Misc/DataDrivenPlatformInfoRegistry.h>
 #include <Misc/FileHelper.h>
@@ -60,7 +61,7 @@ bool UpdateSectionKeyValueOnIniFile(const FString& FilePath, const FString& Sect
 		}
 	}
 
-	if (TrimmedValue.IsEmpty())
+	if (TrimmedValue.IsEmpty() || !SauceLabs::IsValidUrl(TrimmedValue))
 	{
 		// If key doesn't exist, nothing to remove
 		if (!bKeyExists)
@@ -137,4 +138,20 @@ FString PlatformNamesToString(const TMap<FName, FDataDrivenPlatformInfo>& Platfo
 	return Names;
 }
 
+bool IsValidUrl(const FString& Url)
+{
+	if (Url.IsEmpty())
+	{
+		return false;
+	}
+
+	// Enforces HTTPS, a domain starting with unreal., /post/, and two subsequent ID segments
+	const FRegexPattern Pattern(TEXT("^https://unreal\\.[^/]+/post/[^/]+/[^/]+"));
+
+	FRegexMatcher Matcher(Pattern, Url);
+
+	return Matcher.FindNext();
+}
+
 /* SauceLabs */ }
+
