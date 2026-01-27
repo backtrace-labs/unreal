@@ -8,7 +8,7 @@
 	"CreatedBy": "Sauce Labs Inc.",
 	"CreatedByURL": "https://saucelabs.com/",
 	"DocsURL": "https://docs.saucelabs.com/",
-	"MarketplaceURL": "tbd",
+	"MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/4038fd34-96b1-4922-a0bb-2eef4c454f27",
 	"SupportURL": "https://saucelabs.com/contact-us",
 	"EngineVersion": "5.6.0",
 	"CanContainContent": false,
@@ -19,7 +19,12 @@
 		{
 			"Name": "SauceReport",
 			"Type": "Editor",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64",
+				"Mac",
+				"Linux"
+			]
 		}
 	]
 }

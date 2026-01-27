@@ -11,7 +11,7 @@ set "UE_DIR=%SCRIPT_DIR%"
 set "ZIPS_DIR=%SCRIPT_DIR%verification"
 
 REM Clear and create Zips directory
-if exist "%ZIPS_DIR%" rmdir /s/q "%ZIPS_DIR%"
+if exist "%ZIPS_DIR%" del /f/q "%ZIPS_DIR%*.zip"
 if not exist "%ZIPS_DIR%" mkdir "%ZIPS_DIR%"
 
 REM Check if 7-Zip is installed
