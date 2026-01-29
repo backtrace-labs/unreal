@@ -15,7 +15,7 @@
 namespace SauceLabs
 {
 
-FString SauceLabs::GetProjectPlatformEngineIniPath(const FString& PlatformName)
+FString GetProjectPlatformEngineIniPath(const FString& PlatformName)
 {
 	return FPaths::ProjectConfigDir() / PlatformName / (PlatformName + TEXT("Engine.ini"));
 }
