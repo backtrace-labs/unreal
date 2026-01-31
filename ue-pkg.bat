@@ -71,6 +71,7 @@ echo SauceSample.uproject>> "%LISTFILE%"
 REM This explicitly tells 7-Zip: "Start at Plugins, go down to SauceReport..."
 echo Plugins\SauceReport\Config>> "%LISTFILE%"
 echo Plugins\SauceReport\Source>> "%LISTFILE%"
+echo Plugins\SauceReport\Resources>> "%LISTFILE%"
 echo Plugins\SauceReport\SauceReport.uplugin>> "%LISTFILE%"
 
 REM 2. Run 7-Zip using the list file (@ symbol)
@@ -97,6 +98,7 @@ REM Create the list of files that needs to go in the plugin' zip
 if exist "%LISTFILE%" del "%LISTFILE%"
 echo SauceReport\Config>> "%LISTFILE%"
 echo SauceReport\Source>> "%LISTFILE%"
+echo SauceReport\Resources>> "%LISTFILE%"
 echo SauceReport\SauceReport.uplugin>> "%LISTFILE%"
 
 REM Zip with 7-Zip
